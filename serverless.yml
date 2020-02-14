@@ -1,4 +1,4 @@
-service: Alertur-Login
+service: Login
 
 
 provider:
@@ -10,12 +10,12 @@ provider:
   environment: ${self:custom.environments.${opt:stage, 'DEV'}}
 
 custom:
-  saasName: 'Alertur'
+  saasName: 'Login'
+  accessKeyId: ${ssm:concise-accessKeyId~true}
+  secretAccessKey: ${ssm:concise-secretAccessKey~true}
+  region: ${ssm:concise-region~true}
   pathToHandler: "compiled/src"
   pathToJSFile: "src"
-  accessKeyId: ${ssm:Alertur-accessKeyId~true}
-  secretAccessKey: ${ssm:Alertur-secretAccessKey~true}
-  region: ${ssm:Alertur-region~true}
   environments:
     DEV:
       saasName: ${self:custom.saasName}
@@ -59,7 +59,7 @@ functions:
           method: put
           cors: true
     tags:
-      type: api
+      type: shared
 
 
   read:
@@ -72,6 +72,8 @@ functions:
           path: read
           method: get
           cors: true
+    tags:
+      type: shared
 
 
   read-userId:
@@ -84,6 +86,8 @@ functions:
           path: read-userId
           method: get
           cors: true
+    tags:
+      type: shared
 
 
   delete:
@@ -96,3 +100,5 @@ functions:
           path: delete
           method: delete
           cors: true
+    tags:
+      type: shared
