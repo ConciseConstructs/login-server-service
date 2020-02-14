@@ -1,0 +1,98 @@
+service: Alertur-Login
+
+
+provider:
+  name: aws
+  region: us-east-2
+  stage: DEV
+  runtime: nodejs10.x
+  role: arn:aws:iam::556332110707:role/LambdaBasicPrivileges
+  environment: ${self:custom.environments.${opt:stage, 'DEV'}}
+
+custom:
+  saasName: 'Alertur'
+  pathToHandler: "compiled/src"
+  pathToJSFile: "src"
+  accessKeyId: ${ssm:Alertur-accessKeyId~true}
+  secretAccessKey: ${ssm:Alertur-secretAccessKey~true}
+  region: ${ssm:Alertur-region~true}
+  environments:
+    DEV:
+      saasName: ${self:custom.saasName}
+      stage: 'DEV'
+      accessKeyId: ${self:custom.accessKeyId}
+      secretAccessKey: ${self:custom.secretAccessKey}
+      region: ${self:custom.region}
+    PROD:
+      saasName: ${self:custom.saasName}
+      stage: 'PROD'
+      accessKeyId: ${self:custom.accessKeyId}
+      secretAccessKey: ${self:custom.secretAccessKey}
+      region: ${self:custom.region}
+
+
+plugins:
+  - serverless-plugin-include-dependencies
+
+
+package:
+  individually: true
+  exclude:
+    - "*.*"
+    - "src/**"
+    - "compiled/**"
+    - "correctModuleNames.js"
+  include:
+    - "*.js"
+
+
+functions:
+
+  create:
+    handler: ${self:custom.pathToHandler}/create.handler
+    package:
+      include:
+      - "${self:custom.pathToJSFile}/create.js"
+    events:
+      - http:
+          path: create
+          method: put
+          cors: true
+    tags:
+      type: api
+
+
+  read:
+    handler: ${self:custom.pathToHandler}/read.handler
+    package:
+      include:
+      - "${self:custom.pathToJSFile}/read.js"
+    events:
+      - http:
+          path: read
+          method: get
+          cors: true
+
+
+  read-userId:
+    handler: ${self:custom.pathToHandler}/read-userId.handler
+    package:
+      include:
+      - "${self:custom.pathToJSFile}/read-userId.js"
+    events:
+      - http:
+          path: read-userId
+          method: get
+          cors: true
+
+
+  delete:
+    handler: ${self:custom.pathToHandler}/delete.handler
+    package:
+      include:
+      - "${self:custom.pathToJSFile}/delete.js"
+    events:
+      - http:
+          path: delete
+          method: delete
+          cors: true
