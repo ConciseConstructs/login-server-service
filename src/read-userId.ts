@@ -1,21 +1,17 @@
 import { LambdaHandler } from '../lib/classes/lambdahandler/LambdaHandler.class'
+import { IReadUserIdRequest } from '../lib/interfaces/ILoginService/IReadUserId.interface'
 import { IResponse } from '../lib/classes/lambdahandler/Response.class'
 import { Context, Callback } from 'aws-lambda'
 
 
-  export interface IRequest {
-    userId:string
-  }
-
-
-export function handler(incomingRequest:IRequest, context:Context, callback:Callback) {
+export function handler(incomingRequest:IReadUserIdRequest, context:Context, callback:Callback) {
 
   class HandlerObject extends LambdaHandler {
-    protected request:IRequest
+    protected request:IReadUserIdRequest
     protected response:IResponse
 
 
-    constructor(incomingRequest:IRequest, context:Context, callback:Callback) {
+    constructor(incomingRequest:IReadUserIdRequest, context:Context, callback:Callback) {
       super(incomingRequest, context, callback)
     }
 
@@ -42,13 +38,13 @@ export function handler(incomingRequest:IRequest, context:Context, callback:Call
           return {
             TableName: `_logins-${ process.env.stage }`,
             IndexName: 'userId',
-            KeyConditionExpression: '#saas = :saas and #x = :y',
+            KeyConditionExpression: '#saas = :saas and #userId = :userId',
             ExpressionAttributeNames: {
-              "#x": 'userId',
+              "#userId": 'userId',
               "#saas": 'saas'
             },
             ExpressionAttributeValues: {
-              ':y': this.request.userId,
+              ':userId': this.request.userId,
               ':saas': `${ process.env.saasName }`
             }
           }

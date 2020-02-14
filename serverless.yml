@@ -62,14 +62,14 @@ functions:
       type: shared
 
 
-  read:
-    handler: ${self:custom.pathToHandler}/read.handler
+  read-authId:
+    handler: ${self:custom.pathToHandler}/read-authId.handler
     package:
       include:
-      - "${self:custom.pathToJSFile}/read.js"
+      - "${self:custom.pathToJSFile}/read-authId.js"
     events:
       - http:
-          path: read
+          path: read-authId
           method: get
           cors: true
     tags:

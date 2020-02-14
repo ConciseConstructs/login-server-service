@@ -1,26 +1,24 @@
 import { LambdaHandler } from '../lib/classes/lambdahandler/LambdaHandler.class'
+import { IReadAuthIdRequest } from '../lib/interfaces/ILoginService/IReadAuthId.interface'
 import { IResponse } from '../lib/classes/lambdahandler/Response.class'
 import { Context, Callback } from 'aws-lambda'
 
-export interface IRequest {
-  cognitoId:string
-}
 
-export function handler(incomingRequest:IRequest, context:Context, callback:Callback) {
+export function handler(incomingRequest:IReadAuthIdRequest, context:Context, callback:Callback) {
 
   class HandlerObject extends LambdaHandler {
-    protected request:IRequest
+    protected request:IReadAuthIdRequest
     protected response:IResponse
 
 
-    constructor(incomingRequest:IRequest, context:Context, callback:Callback) {
+    constructor(incomingRequest:IReadAuthIdRequest, context:Context, callback:Callback) {
       super(incomingRequest, context, callback)
     }
 
 
 
         protected hookConstructorPre() {
-          this.requiredInputs = ['cognitoId']
+          this.requiredInputs = ['authId']
           this.needsToConnectToDatabase = true
         }
 
@@ -32,15 +30,15 @@ export function handler(incomingRequest:IRequest, context:Context, callback:Call
 
 
     protected performActions() {
-      this.queryAccountAndUserByCognitoId()
+      this.queryAccountAndUserByAuthId()
     }
 
 
 
 
-        private queryAccountAndUserByCognitoId() {
+        private queryAccountAndUserByAuthId() {
           this.db.query(this.makeGetLoginProfileSyntax()).promise()
-            .then(result => this.onQueryAccountAndUserByCognitoIdSuccess(result))
+            .then(result => this.onQueryAccountAndUserByAuthIdSuccess(result))
             .catch(error => this.hasFailed(error))
         }
 
@@ -50,10 +48,10 @@ export function handler(incomingRequest:IRequest, context:Context, callback:Call
             private makeGetLoginProfileSyntax() {
               return {
                 TableName: `_logins-${ process.env.stage }`,
-                KeyConditionExpression: 'saas = :saas and cognitoId = :cognitoId',
+                KeyConditionExpression: 'saas = :saas and cognitoId = :authId',
                 ExpressionAttributeValues: {
-                  ':saas': process.env.saasName,
-                  ':cognitoId': this.request.cognitoId
+                  ':saas': this.request.saasName,
+                  ':authId': this.request.authId
                 }
               }
             }
@@ -61,7 +59,7 @@ export function handler(incomingRequest:IRequest, context:Context, callback:Call
 
 
 
-            private onQueryAccountAndUserByCognitoIdSuccess(result) {
+            private onQueryAccountAndUserByAuthIdSuccess(result) {
               if (!result.Items) this.hasFailed(result)
               else this.hasSucceeded(result)
             }

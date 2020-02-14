@@ -1,25 +1,20 @@
 import { LambdaHandler } from '../lib/classes/lambdahandler/LambdaHandler.class'
+import { ICreateRequest } from '../lib/interfaces/ILoginService/ICreate.interface'
 import { IResponse } from '../lib/classes/lambdahandler/Response.class'
 import { Context, Callback } from 'aws-lambda'
 import { DynamoDB } from 'aws-sdk'
 
 
-  export interface IRequest {
-    authId:string
-    acctId:string
-    userId:string
-  }
 
-
-export function handler(incomingRequest:IRequest, context:Context, callback:Callback) {
+export function handler(incomingRequest:ICreateRequest, context:Context, callback:Callback) {
 
   class HandlerObject extends LambdaHandler {
-    protected request:IRequest
+    protected request:ICreateRequest
     protected response:IResponse
     protected db:DynamoDB.DocumentClient
 
 
-    constructor(incomingRequest:IRequest, context:Context, callback:Callback) {
+    constructor(incomingRequest:ICreateRequest, context:Context, callback:Callback) {
       super(incomingRequest, context, callback)
     }
 
@@ -57,7 +52,7 @@ export function handler(incomingRequest:IRequest, context:Context, callback:Call
               return {
                 TableName: `_logins-${ process.env.stage }`,
                 Item: {
-                  saas: process.env.saasName,
+                  saas: this.request.saasName,
                   cognitoId: this.request.authId,
                   acctId:  this.request.acctId,
                   userId: this.request.userId,

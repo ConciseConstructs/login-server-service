@@ -1,21 +1,17 @@
 import { LambdaHandler } from '../lib/classes/lambdahandler/LambdaHandler.class'
+import { IDeleteRequest } from '../lib/interfaces/ILoginService/IDelete.interface'
 import { IResponse } from '../lib/classes/lambdahandler/Response.class'
 import { Context, Callback } from 'aws-lambda'
 
 
-  export interface IRequest {
-    cognitoId:string
-  }
-
-
-export function handler(incomingRequest:IRequest, context:Context, callback:Callback) {
+export function handler(incomingRequest:IDeleteRequest, context:Context, callback:Callback) {
 
   class HandlerObject extends LambdaHandler {
-    protected request:IRequest
+    protected request:IDeleteRequest
     protected response:IResponse
 
 
-    constructor(incomingRequest:IRequest, context:Context, callback:Callback) {
+    constructor(incomingRequest:IDeleteRequest, context:Context, callback:Callback) {
       super(incomingRequest, context, callback)
     }
 
