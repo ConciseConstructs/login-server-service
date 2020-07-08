@@ -8,6 +8,12 @@ provider:
   runtime: nodejs10.x
   role: arn:aws:iam::556332110707:role/LambdaBasicPrivileges
   environment: ${self:custom.environments.${opt:stage, 'DEV'}}
+  deploymentBucket:
+    tags:
+      saas: ${self:custom.saasName}
+      stage: ${opt:stage, 'DEV'}
+      scope: global
+      type: login
 
 custom:
   saasName: 'Login'
@@ -16,6 +22,11 @@ custom:
   region: ${ssm:concise-region~true}
   pathToHandler: "compiled/src"
   pathToJSFile: "src"
+  apiGatewayTags:
+    saas: ${self:custom.saasName}
+    stage: ${opt:stage, 'DEV'}
+    scope: global
+    type: login
   environments:
     DEV:
       saasName: ${self:custom.saasName}
@@ -33,6 +44,7 @@ custom:
 
 plugins:
   - serverless-plugin-include-dependencies
+  - serverless-tag-api-gateway
 
 
 package:
@@ -59,7 +71,10 @@ functions:
           method: put
           cors: true
     tags:
-      type: shared
+      saas: ${self:custom.saasName}
+      stage: ${opt:stage, 'DEV'}
+      scope: global
+      type: login
 
 
   read-authId:
@@ -73,7 +88,10 @@ functions:
           method: get
           cors: true
     tags:
-      type: shared
+      saas: ${self:custom.saasName}
+      stage: ${opt:stage, 'DEV'}
+      scope: global
+      type: login
 
 
   read-userId:
@@ -87,7 +105,10 @@ functions:
           method: get
           cors: true
     tags:
-      type: shared
+      saas: ${self:custom.saasName}
+      stage: ${opt:stage, 'DEV'}
+      scope: global
+      type: login
 
 
   delete:
@@ -101,4 +122,7 @@ functions:
           method: delete
           cors: true
     tags:
-      type: shared
+      saas: ${self:custom.saasName}
+      stage: ${opt:stage, 'DEV'}
+      scope: global
+      type: login

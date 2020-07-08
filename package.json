@@ -6,12 +6,13 @@
   "license": "ISC",
   "description": "This is the service to manipulate and access login records.",
   "dependencies": {
-    "aws-sdk": "^2.439.0"
+    "aws-sdk": "2.439.0"
   },
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.14",
-    "@types/node": "^11.11.3",
-    "serverless-plugin-include-dependencies": "^3.2.1"
+    "@types/aws-lambda": "8.10.14",
+    "@types/node": "11.11.3",
+    "serverless-plugin-include-dependencies": "3.2.1",
+    "serverless-tag-api-gateway": "1.0.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
